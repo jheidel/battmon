@@ -1,5 +1,5 @@
-#ifndef BATTMON_FLASH
-#define BATTMON_FLASh
+#ifndef BATTMON_FLASH_H_
+#define BATTMON_FLASH_H_
 
 #include "globals.h"
 #include "task.h"
@@ -9,8 +9,6 @@ public:
   Flasher(unsigned long on, unsigned long off) : on_(on), off_(off) {
     state_ = false;
   }
-
-  bool CanRun() override { return true; }
 
   void Run() override {
     if (state_) {
@@ -30,4 +28,4 @@ private:
   bool state_;
 };
 
-#endif // BATTMON_FLASH
+#endif // BATTMON_FLASH_H_

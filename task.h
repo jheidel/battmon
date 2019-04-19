@@ -1,9 +1,10 @@
-#ifndef BATTMON_TASK
-#define BATTMON_TASK
+#ifndef BATTMON_TASK_H_
+#define BATTMON_TASK_H_
 
 class Task {
 public:
-  virtual bool CanRun() = 0;
+  virtual bool Setup() { return true; }
+  virtual bool CanRun() { return true; }
   virtual void Run() = 0;
 
   void set_interval(unsigned long interval) { interval_ = interval; }
@@ -15,4 +16,4 @@ private:
   unsigned long interval_ = 0;
 };
 
-#endif // BATTMON_TASK
+#endif // BATTMON_TASK_H_
