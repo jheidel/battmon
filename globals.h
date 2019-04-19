@@ -13,5 +13,9 @@
 #define LED_CONTROL 6
 
 extern uint16_t channels_mv[8];
+extern uint8_t channels_count;
+
+#define CODE_SETUP 1
+void Fatal(uint8_t code);
 
 #endif // BATTMON_GLOBALS_H_

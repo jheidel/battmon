@@ -2,23 +2,43 @@
 
 #include "globals.h"
 
-#include "task.h"
-#include "flash.h"
-#include "display.h"
 #include "adc.h"
 #include "cli.h"
+#include "display.h"
+#include "flash.h"
+#include "task.h"
 
 // TODO some better form of status display.
-Flasher f1(50, 5000);
-Flasher f2(200, 3000);
+Flasher status(20, 3000);
 
 Adc adc;
 Display display;
 Cli cli;
 
-Task* all_tasks[] = {&f1, &f2, &adc, &display, &cli};
+Task* all_tasks[] = {&status, &adc, &display, &cli};
 
 uint16_t channels_mv[8] = {0};
+uint8_t channels_count = 0;
+
+void Fatal(uint8_t code) {
+  for (;;) {
+    for (int i = 0; i < 10; ++i) {
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(50);
+      digitalWrite(LED_BUILTIN, LOW);
+      delay(50);
+    }
+    delay(1000);
+
+    for (int i = 0; i < code; ++i) {
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(100);
+      digitalWrite(LED_BUILTIN, LOW);
+      delay(500);
+    }
+    delay(3000);
+  }
+}
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -28,8 +48,7 @@ void setup() {
 
   for (int i = 0; i < sizeof(all_tasks) / sizeof(Task*); ++i) {
     if (!all_tasks[i]->Setup()) {
-      digitalWrite(LED_BUILTIN, HIGH);
-      for (;;); // Don't proceed, loop forever
+      Fatal(CODE_SETUP);
     }
   }
 
@@ -50,6 +69,7 @@ void loop() {
       delay(500);
     }
     digitalWrite(PWR_CONTROL, HIGH);
-    for (;;);
+    for (;;)
+      ;
   }
 }

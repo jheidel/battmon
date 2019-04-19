@@ -1,9 +1,9 @@
 #include "display.h"
 
-#include <Wire.h>
+#include "globals.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include "globals.h"
+#include <Wire.h>
 
 namespace {
 
@@ -12,13 +12,14 @@ namespace {
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-void PrintCells() {
-  char buf[32];
-  char mvb[10];
+inline void PrintCells(char* buf) {
+  char mvb[8];
 
-  for (int i = 0; i < 8; ++i) {
+  display.setCursor(0, display.height() / 2);
+
+  for (int i = 0; i < channels_count; ++i) {
     dtostrf(float(channels_mv[i]) / 1000, 5, 3, mvb);
-    sprintf(buf, "C%d: %s", i + 1, mvb);
+    sprintf(buf, "V%d: %s", i + 1, mvb);
 
     if (i % 2 == 0) {
       display.print(buf);
@@ -29,38 +30,39 @@ void PrintCells() {
   }
 }
 
-void DrawCellsScreen() {
-  char ts[12] = {0};
-  double alive = double(millis()) / 1000;
-  dtostrf(alive, 0, 2, ts);
-
-  char buf[32] = {0};
-  sprintf(buf, "%s sec", ts);
+inline void DrawStatusScreen() {
+  char buf[9] = {0};
 
   display.clearDisplay();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
 
   display.setCursor(0, 0);
-  display.println("Alive");
+  display.println("System Uptime");
+
+  unsigned long up_sec = millis() / 1000;
+  unsigned long up_min = up_sec / 60;
+  unsigned long up_hour = up_min / 60;
+  up_min -= up_hour * 60;
+  up_sec -= up_hour * 60 + up_min * 60;
+  snprintf(buf, sizeof(buf), "%lu:%02lu:%02lu", up_hour, up_min, up_sec);
+
+  display.setCursor(0, display.getCursorY() + 2);
+  display.setTextSize(2);
   display.println(buf);
 
-
   display.setTextSize(1);
-
-  PrintCells();
+  PrintCells(buf);
   display.display();
 }
 
-}  // namespace
+} // namespace
 
 bool Display::Setup() {
   if (!display.begin(SSD1306_SWITCHCAPVCC, ADDR_OLED)) {
-      return false;
+    return false;
   }
   return true;
 }
 
-void Display::Run() {
-    DrawCellsScreen();
-}
+void Display::Run() { DrawStatusScreen(); }
