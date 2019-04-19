@@ -38,7 +38,7 @@ inline void DrawStatusScreen() {
   display.setTextColor(WHITE);
 
   display.setCursor(0, 0);
-  display.println("System Uptime");
+  display.println(F("System Uptime"));
 
   unsigned long up_sec = millis() / 1000;
   unsigned long up_min = up_sec / 60;
