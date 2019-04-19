@@ -14,12 +14,15 @@ public:
     STATE_CMD_SELECT = 0,
     STATE_CAL_0,
     STATE_CAL_1,
+    STATE_CAL_2,
   };
 
 private:
   void RunCmdSelect(const char* cmd, size_t cmd_size);
+
   void RunCal0(const char* cmd, size_t cmd_size);
   void RunCal1(const char* cmd, size_t cmd_size);
+  void RunCal2(const char* cmd, size_t cmd_size);
 
   State state_;
 };

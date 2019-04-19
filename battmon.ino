@@ -1,11 +1,11 @@
 #include <SPI.h>
 
-#include "globals.h"
-
 #include "adc.h"
 #include "cli.h"
 #include "display.h"
 #include "flash.h"
+#include "globals.h"
+#include "settings.h"
 #include "task.h"
 
 // TODO some better form of status display.
@@ -45,6 +45,8 @@ void setup() {
   pinMode(PWR_CONTROL, OUTPUT);
   pinMode(LED_CONTROL, OUTPUT);
   digitalWrite(LED_CONTROL, LOW);
+
+  LoadSettings();
 
   for (int i = 0; i < sizeof(all_tasks) / sizeof(Task*); ++i) {
     if (!all_tasks[i]->Setup()) {
