@@ -13,7 +13,7 @@ bool Cli::CanRun() { return Serial.available() > 0; }
 
 void Cli::Run() {
   // Read input command.
-  char buf[8];
+  char buf[8] = {0};
   int read_len = Serial.readBytesUntil('\n', buf, sizeof(buf));
 
   // Consume any excess characters.
@@ -34,6 +34,9 @@ void Cli::Run() {
     break;
   case STATE_CAL_1:
     RunCal1(buf, read_len);
+    break;
+  case STATE_CAL_2:
+    RunCal2(buf, read_len);
     break;
   }
 }
@@ -80,10 +83,12 @@ uint16_t ReadInputVoltage(const char* cmd, size_t cmd_size) {
     Serial.println(F("Voltage out of range."));
     return 0;
   }
+
   uint16_t ret = mv;
   Serial.print(F("Input voltage "));
-  snprintf(cmd, cmd_size, "%u", ret);
-  Serial.print(cmd);
+  char buf[8];
+  snprintf(buf, 8, "%u", ret);
+  Serial.print(buf);
   Serial.println(F(" mv"));
   return ret;
 }
@@ -112,9 +117,10 @@ void Cli::RunCal0(const char* cmd, size_t cmd_size) {
   }
   adc_channel = chan - 1;
 
+  char buf[8];
   Serial.print(F("Selected ADC channel "));
-  snprintf(cmd, cmd_size, "%u", adc_channel + 1);
-  Serial.print(cmd);
+  snprintf(buf, 8, "%u", adc_channel + 1);
+  Serial.print(buf);
   Serial.println();
 
   Serial.println(F("Adjust the supply to a low voltage."));
@@ -166,6 +172,7 @@ void Cli::RunCal2(const char* cmd, size_t cmd_size) {
 
   // Solve for map calibration values.
   // TODO......
+  // TODO, above calculation doesn't seem correct.
 
   Serial.println(F("Calibration successful."));
   state_ = STATE_CMD_SELECT;
