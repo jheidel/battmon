@@ -88,6 +88,7 @@ public:
     if (fan_steps[fan_idx_] == 0) {
       display.println(F("OFF"));
     } else {
+      display.print(F("ON "));
       char buf[8];
       dtostrf(double(fan_steps[fan_idx_]) / 255, 0, 0, buf);
       display.print(buf);
