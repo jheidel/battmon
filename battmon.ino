@@ -64,14 +64,14 @@ void loop() {
     all_tasks[i]->Tick(now);
   }
 
-  // TODO: move
-  if (now > 300000 || channels_mv[0] < 8000) {
-    for (int i = 0; i < 5; ++i) {
-      tone(BUZZER_PIN, 440 * 2, 300);
-      delay(500);
-    }
-    digitalWrite(PWR_CONTROL, HIGH);
-    for (;;)
-      ;
-  }
+  //  // TODO: move
+  //  if (now > 300000 || channels_mv[0] < 8000) {
+  //    for (int i = 0; i < 5; ++i) {
+  //      tone(BUZZER_PIN, 440 * 2, 300);
+  //      delay(500);
+  //    }
+  //    digitalWrite(PWR_CONTROL, HIGH);
+  //    for (;;)
+  //      ;
+  //  }
 }

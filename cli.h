@@ -15,6 +15,9 @@ public:
     STATE_CAL_0,
     STATE_CAL_1,
     STATE_CAL_2,
+    STATE_ENT_0,
+    STATE_ENT_1,
+    STATE_ENT_2,
   };
 
 private:
@@ -23,6 +26,10 @@ private:
   void RunCal0(const char* cmd, size_t cmd_size);
   void RunCal1(const char* cmd, size_t cmd_size);
   void RunCal2(const char* cmd, size_t cmd_size);
+
+  void RunEnt0(const char* cmd, size_t cmd_size);
+  void RunEnt1(const char* cmd, size_t cmd_size);
+  void RunEnt2(const char* cmd, size_t cmd_size);
 
   State state_;
 };

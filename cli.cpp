@@ -10,7 +10,7 @@ void PrintCalibration() {
   char buf[8];
   for (int i = 0; i < 8; ++i) {
     Serial.print(F("\tChannel #"));
-    sprintf(buf, "%d", i);
+    sprintf(buf, "%d", i + 1);
     Serial.print(buf);
     Serial.print(F(", low="));
     sprintf(buf, "%d", settings.adc_cal_l[i]);
@@ -59,6 +59,15 @@ void Cli::Run() {
   case STATE_CAL_2:
     RunCal2(buf, read_len);
     break;
+  case STATE_ENT_0:
+    RunEnt0(buf, read_len);
+    break;
+  case STATE_ENT_1:
+    RunEnt1(buf, read_len);
+    break;
+  case STATE_ENT_2:
+    RunEnt2(buf, read_len);
+    break;
   }
 }
 
@@ -75,13 +84,20 @@ void Cli::RunCmdSelect(const char* cmd, size_t cmd_size) {
     state_ = STATE_CAL_0;
     break;
 
+  case 'e':
+    Serial.println(F("Which channel [1-8]?"));
+    state_ = STATE_ENT_0;
+    break;
+
   case 'p':
+    Serial.println(F("Current calibration table:"));
     PrintCalibration();
     break;
 
   case 'h':
     Serial.println(F("Valid commands:"));
     Serial.println(F("\t'c' - start adc channel calibration"));
+    Serial.println(F("\t'e' - enter adc channel calibration value"));
     Serial.println(F("\t'p' - print current calibration"));
     Serial.println(F("\t'h' - this screen"));
     break;
@@ -128,7 +144,10 @@ unsigned long Sample() {
     delay(100);
   }
   acc /= samples;
-  Serial.println(F("Sampling complete."));
+  Serial.print(F("Sampling complete, sampled value="));
+  char buf[10];
+  sprintf(buf, "%ld", acc);
+  Serial.println(buf);
   return acc;
 }
 
@@ -199,10 +218,10 @@ void Cli::RunCal2(const char* cmd, size_t cmd_size) {
   Serial.println();
 
   int16_t low = int16_t(x);
-  int16_t high = int16_t(x);
+  int16_t high = int16_t(y);
 
   Serial.print(F("Channel #"));
-  sprintf(buf, "%d", adc_channel);
+  sprintf(buf, "%d", adc_channel + 1);
   Serial.print(buf);
   Serial.print(F(", calibrated low="));
   sprintf(buf, "%d", low);
@@ -217,5 +236,31 @@ void Cli::RunCal2(const char* cmd, size_t cmd_size) {
   PersistSettings();
 
   Serial.println(F("Calibration successful."));
+  state_ = STATE_CMD_SELECT;
+}
+
+void Cli::RunEnt0(const char* cmd, size_t cmd_size) {
+  int chan = atoi(cmd);
+  if (chan <= 0 || chan > 8) {
+    Serial.println(F("Channel out of range."));
+    state_ = STATE_CMD_SELECT;
+    return;
+  }
+  adc_channel = chan - 1;
+
+  Serial.println(F("Enter value for \"low\":"));
+  state_ = STATE_ENT_1;
+}
+
+void Cli::RunEnt1(const char* cmd, size_t cmd_size) {
+  settings.adc_cal_l[adc_channel] = atoi(cmd);
+  Serial.println(F("Enter value for \"high\":"));
+  state_ = STATE_ENT_2;
+}
+
+void Cli::RunEnt2(const char* cmd, size_t cmd_size) {
+  settings.adc_cal_h[adc_channel] = atoi(cmd);
+  PersistSettings();
+  Serial.println(F("Values entered."));
   state_ = STATE_CMD_SELECT;
 }

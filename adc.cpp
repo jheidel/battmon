@@ -21,9 +21,6 @@ uint16_t rbot[8] = {100, 100, 100, 100, 100, 100, 1, 1};
 
 inline void Read(uint8_t idx) {
   long val = ReadAdcChannel(idx);
-  val *= rtop[idx];
-  val /= rbot[idx];
-
   uint16_t mv = map(val, 0 + settings.adc_cal_l[idx],
                     32768 + settings.adc_cal_h[idx], 0, 6144);
   channels_mv[idx] = mv;
@@ -72,5 +69,8 @@ long ReadAdcChannel(uint8_t channel_idx) {
   if (val < 0) {
     val = 0;
   }
+
+  val *= rtop[channel_idx];
+  val /= rbot[channel_idx];
   return val;
 }
