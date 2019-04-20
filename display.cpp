@@ -54,11 +54,7 @@ public:
     display.println(buf);
 
     display.setTextSize(1);
-    PrintCells(buf);
-  }
 
-private:
-  void PrintCells(char* buf) {
     char mvb[8];
     display.setCursor(0, display.height() / 2);
 
