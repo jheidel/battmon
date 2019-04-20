@@ -89,8 +89,9 @@ public:
       display.println(F("OFF"));
     } else {
       display.print(F("ON "));
-      char buf[8];
-      dtostrf(double(fan_steps[fan_idx_]) / 255, 0, 0, buf);
+      char buf[8] = {0};
+      uint16_t long val = 100 * uint16_t(fan_steps[fan_idx_]) / 255;
+      sprintf(buf, "%lu", val);
       display.print(buf);
       display.println(F("%"));
     }
