@@ -2,6 +2,7 @@
 #define BATTMON_FLASH_H_
 
 #include "globals.h"
+#include "settings.h"
 #include "task.h"
 
 class Flasher : public Task {
@@ -9,6 +10,8 @@ public:
   Flasher(unsigned long on, unsigned long off) : on_(on), off_(off) {
     state_ = false;
   }
+
+  bool CanRun() override { return settings.enable_heartbeat; }
 
   void Run() override {
     if (state_) {

@@ -11,6 +11,7 @@ public:
 
 private:
   void Press0();
+  void Press1();
 };
 
 #endif // BATTMON_BUTTON_H_

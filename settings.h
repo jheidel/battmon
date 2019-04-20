@@ -5,12 +5,12 @@
 
 #define SETTINGS_MAGIC 0xABCD
 
-enum VoltDisplay {
-  DISPLAY_CELLS = 0,
-  DISPLAY_VOLTS,
-};
-
 struct PersistentSettings {
+  PersistentSettings() {
+    magic = SETTINGS_MAGIC;
+    size = sizeof(PersistentSettings);
+  }
+
   uint16_t magic;
   uint16_t size;
 
@@ -18,12 +18,11 @@ struct PersistentSettings {
   int16_t adc_cal_l[8];
   int16_t adc_cal_h[8];
 
-  VoltDisplay volt_display;
+  bool enable_heartbeat;
+  bool display_raw_voltage;
 };
 
-struct RuntimeSettings {
-  uint8_t screen_state = 0;
-};
+struct RuntimeSettings {};
 
 extern PersistentSettings settings;
 

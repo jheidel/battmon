@@ -5,8 +5,12 @@
 
 class Display : public Task {
 public:
+  bool CanRun() override;
   bool Setup() override;
   void Run() override;
 };
+
+void ScreenIncrement();
+void ScreenSelect();
 
 #endif // BATTMON_DISPLAY_H_
