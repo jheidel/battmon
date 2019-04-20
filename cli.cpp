@@ -1,7 +1,28 @@
 #include "cli.h"
 
 #include "adc.h"
+#include "settings.h"
 #include <Arduino.h>
+
+namespace {
+
+void PrintCalibration() {
+  char buf[8];
+  for (int i = 0; i < 8; ++i) {
+    Serial.print(F("\tChannel #"));
+    sprintf(buf, "%d", i);
+    Serial.print(buf);
+    Serial.print(F(", low="));
+    sprintf(buf, "%d", settings.adc_cal_l[i]);
+    Serial.print(buf);
+    Serial.print(F(", high="));
+    sprintf(buf, "%d", settings.adc_cal_h[i]);
+    Serial.print(buf);
+    Serial.println();
+  }
+}
+
+} // namespace
 
 bool Cli::Setup() {
   Serial.begin(9600);
@@ -54,9 +75,14 @@ void Cli::RunCmdSelect(const char* cmd, size_t cmd_size) {
     state_ = STATE_CAL_0;
     break;
 
+  case 'p':
+    PrintCalibration();
+    break;
+
   case 'h':
     Serial.println(F("Valid commands:"));
     Serial.println(F("\t'c' - start adc channel calibration"));
+    Serial.println(F("\t'p' - print current calibration"));
     Serial.println(F("\t'h' - this screen"));
     break;
 
@@ -149,30 +175,46 @@ void Cli::RunCal2(const char* cmd, size_t cmd_size) {
   }
   adc_reading_1 = Sample();
 
-  // Compute ADC accuracy...
-  double a1 = double(adc_reading_0);
-  double c1 = double(adc_mv_0) * 32768 / 6144;
-  double a2 = double(adc_reading_1);
-  double c2 = double(adc_mv_1) * 32768 / 6144;
+  // Solve for low & high adc map adjustment parameters.
+  double a1 = double(adc_mv_0) - 6144;
+  double b1 = -1. * double(adc_mv_0);
+  double c1 = double(adc_mv_0) * 32768 - double(adc_reading_0) * 6144;
+
+  double a2 = double(adc_mv_1);
+  double b2 = -1. * double(adc_mv_1);
+  double c2 = double(adc_mv_1) * 32768 - double(adc_reading_1) * 6144;
 
   // Cramer's rule solve for scale and offset.
-  double m = (c1 - c2) / (a1 - a2);
-  double b = (a1 * c2 - c1 * a2) / (a1 - a2);
+  double x = (c1 * b2 - b1 * c2) / (a1 * b2 - b1 * a2);
+  double y = (a1 * c2 - c1 * a2) / (a1 * b2 - b1 * a2);
 
-  Serial.println(F("Computed scaling m="));
+  // TODO redundant remove.
+  Serial.print(F("Float result low="));
   char buf[8];
-  dtostrf(m, 0, 3, buf);
+  dtostrf(x, 0, 2, buf);
+  Serial.print(buf);
+  Serial.print(F(", high="));
+  dtostrf(y, 0, 2, buf);
   Serial.print(buf);
   Serial.println();
 
-  Serial.println(F("Computed offset b="));
-  dtostrf(b, 0, 1, buf);
+  int16_t low = int16_t(x);
+  int16_t high = int16_t(x);
+
+  Serial.print(F("Channel #"));
+  sprintf(buf, "%d", adc_channel);
+  Serial.print(buf);
+  Serial.print(F(", calibrated low="));
+  sprintf(buf, "%d", low);
+  Serial.print(buf);
+  Serial.print(F(", high="));
+  sprintf(buf, "%d", high);
   Serial.print(buf);
   Serial.println();
 
-  // Solve for map calibration values.
-  // TODO......
-  // TODO, above calculation doesn't seem correct.
+  settings.adc_cal_l[adc_channel] = low;
+  settings.adc_cal_h[adc_channel] = high;
+  PersistSettings();
 
   Serial.println(F("Calibration successful."));
   state_ = STATE_CMD_SELECT;
