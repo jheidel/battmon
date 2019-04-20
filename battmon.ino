@@ -45,6 +45,7 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(PWR_CONTROL, OUTPUT);
   pinMode(LED_CONTROL, OUTPUT);
+  pinMode(FAN_CONTROL, OUTPUT);
   digitalWrite(LED_CONTROL, LOW);
 
   LoadSettings();

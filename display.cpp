@@ -76,6 +76,8 @@ public:
   }
 };
 
+const uint8_t fan_steps[] = {0, 64, 128, 160, 192, 224, 255};
+
 class FanControl : public Screen {
 public:
   void Draw() override {
@@ -83,9 +85,25 @@ public:
     display.setTextColor(WHITE);
     display.setTextSize(2);
     display.println(F("Fan Control"));
-    // TODO
-    display.println(F("TODO"));
+    if (fan_steps[fan_idx_] == 0) {
+      display.println(F("OFF"));
+    } else {
+      char buf[8];
+      dtostrf(double(fan_steps[fan_idx_]) / 255, 0, 0, buf);
+      display.print(buf);
+      display.println(F("%"));
+    }
   }
+
+  void Select() override {
+    fan_idx_++;
+    if (fan_idx_ >= sizeof(fan_steps)) {
+      fan_idx_ = 0;
+    }
+    analogWrite(FAN_CONTROL, fan_steps[fan_idx_]);
+  }
+
+  uint8_t fan_idx_ = 0;
 };
 
 class MoveRotation : public Screen {
