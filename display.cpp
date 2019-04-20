@@ -169,12 +169,13 @@ bool Display::Setup() {
 bool Display::CanRun() { return screen_on; }
 
 void Display::Run() {
-  if (millis() > last_interact + MENU_TIMEOUT) {
+  const unsigned long now = millis();
+  if (now > last_interact + MENU_TIMEOUT) {
     // Timeout, return to home screen.
     rotation = &primary;
     rotation_idx = 0;
   }
-  if (millis() > last_interact + SCREEN_TIMEOUT) {
+  if (now > last_interact + SCREEN_TIMEOUT) {
     // Stop displaying on screen.
     display.clearDisplay();
     screen_on = false;
