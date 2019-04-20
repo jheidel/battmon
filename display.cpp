@@ -1,6 +1,7 @@
 #include "display.h"
 
 #include "globals.h"
+#include "settings.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
@@ -18,8 +19,12 @@ inline void PrintCells(char* buf) {
   display.setCursor(0, display.height() / 2);
 
   for (int i = 0; i < channels_count; ++i) {
-    dtostrf(float(channels_mv[i]) / 1000, 5, 3, mvb);
-    sprintf(buf, "V%d: %s", i + 1, mvb);
+    dtostrf(float(settings.volt_display == DISPLAY_CELLS ? cells_mv[i]
+                                                         : channels_mv[i]) /
+                1000,
+            5, 3, mvb);
+    sprintf(buf, "%c%d: %s", settings.volt_display == DISPLAY_CELLS ? 'C' : 'V',
+            i + 1, mvb);
 
     if (i % 2 == 0) {
       display.print(buf);
@@ -56,6 +61,15 @@ inline void DrawStatusScreen() {
   display.display();
 }
 
+inline void DrawSettingsScreen() {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.println(F("Settings"));
+  display.display();
+}
+
 } // namespace
 
 bool Display::Setup() {
@@ -65,4 +79,13 @@ bool Display::Setup() {
   return true;
 }
 
-void Display::Run() { DrawStatusScreen(); }
+void Display::Run() {
+  switch (runtime.screen_state) {
+  case 0:
+    DrawStatusScreen();
+    break;
+  case 1:
+    DrawSettingsScreen();
+    break;
+  }
+}

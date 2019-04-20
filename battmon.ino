@@ -1,6 +1,7 @@
 #include <SPI.h>
 
 #include "adc.h"
+#include "button.h"
 #include "cli.h"
 #include "display.h"
 #include "flash.h"
@@ -14,11 +15,11 @@ Flasher status(20, 3000);
 Adc adc;
 Display display;
 Cli cli;
+Buttons buttons;
 
-Task* all_tasks[] = {&status, &adc, &display, &cli};
-
-uint16_t channels_mv[8] = {0};
-uint8_t channels_count = 0;
+Task* all_tasks[] = {
+    &buttons, &status, &adc, &buttons, &display, &buttons, &cli,
+};
 
 void Fatal(uint8_t code) {
   for (;;) {
@@ -49,7 +50,7 @@ void setup() {
   LoadSettings();
 
   for (int i = 0; i < sizeof(all_tasks) / sizeof(Task*); ++i) {
-    if (!all_tasks[i]->Setup()) {
+    if (!all_tasks[i]->SetupInit()) {
       Fatal(CODE_SETUP);
     }
   }

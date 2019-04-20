@@ -12,7 +12,11 @@
 #define PWR_CONTROL 7
 #define LED_CONTROL 6
 
+#define PIN_BUTTON_0 2
+#define PIN_BUTTON_1 3
+
 extern uint16_t channels_mv[8];
+extern uint16_t cells_mv[8];
 extern uint8_t channels_count;
 
 #define CODE_SETUP 1

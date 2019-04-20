@@ -13,12 +13,6 @@ Adafruit_ADS1115 ads1(ADDR_ADS1);
 uint16_t rtop[8] = {570, 570, 570, 570, 570, 570, 1, 1};
 uint16_t rbot[8] = {100, 100, 100, 100, 100, 100, 1, 1};
 
-// Reading calibration values, determined by linear interpolation over sampled
-// data.
-// TODO remove, now in settings.
-// int16_t cal_l[8] = {69, 0, 0, 0, 0, 0, 0, 0};
-// int16_t cal_h[8] = {-526, 0, 0, 0, 0, 0, 0, 0};
-
 inline void Read(uint8_t idx) {
   long val = ReadAdcChannel(idx);
   uint16_t mv = map(val, 0 + settings.adc_cal_l[idx],
@@ -50,8 +44,14 @@ void Adc::Run() {
     channels_count++;
   }
 
-  // TODO the cell delta computations
-  // TODO the cell count determination
+  for (int i = 0; i < channels_count; ++i) {
+    uint16_t prev = i == 0 ? 0 : channels_mv[i - 1];
+    if (channels_mv[i] <= prev) {
+      cells_mv[i] = 0;
+    } else {
+      cells_mv[i] = channels_mv[i] - prev;
+    }
+  }
 
   set_interval(1000 / SAMPLES_PER_SEC);
 }

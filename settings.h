@@ -5,16 +5,29 @@
 
 #define SETTINGS_MAGIC 0xABCD
 
-struct Settings {
+enum VoltDisplay {
+  DISPLAY_CELLS = 0,
+  DISPLAY_VOLTS,
+};
+
+struct PersistentSettings {
   uint16_t magic;
   uint16_t size;
 
   // ADC calibration values.
   int16_t adc_cal_l[8];
   int16_t adc_cal_h[8];
+
+  VoltDisplay volt_display;
 };
 
-extern Settings settings;
+struct RuntimeSettings {
+  uint8_t screen_state = 0;
+};
+
+extern PersistentSettings settings;
+
+extern RuntimeSettings runtime;
 
 void LoadSettings();
 

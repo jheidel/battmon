@@ -2,18 +2,20 @@
 
 #include <EEPROM.h>
 
-Settings settings = {};
+PersistentSettings settings = {};
+RuntimeSettings runtime = {};
 
 namespace {
 
 inline void InitSettings() {
   settings = {};
   settings.magic = SETTINGS_MAGIC;
-  settings.size = sizeof(Settings);
+  settings.size = sizeof(PersistentSettings);
 }
 
 inline bool SettingsValid() {
-  return settings.magic == SETTINGS_MAGIC && settings.size == sizeof(Settings);
+  return settings.magic == SETTINGS_MAGIC &&
+         settings.size == sizeof(PersistentSettings);
 }
 
 } // namespace
