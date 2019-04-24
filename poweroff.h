@@ -12,10 +12,8 @@ constexpr uint16_t cutoff_mv[] = {0, 2700, 2800, 2900, 3000, 3100, 3200, 3300};
 class Poweroff : public Task {
 public:
   void Run() override;
-
-private:
-  bool critical_ = false;
-  unsigned long since_ = 0;
 };
+
+bool IsCriticalVoltage();
 
 #endif // BATTMON_POWEROFF_H_

@@ -15,9 +15,12 @@ uint16_t rbot[8] = {100, 100, 100, 100, 100, 100, 1, 1};
 
 inline void Read(uint8_t idx) {
   long val = ReadAdcChannel(idx);
-  uint16_t mv = map(val, 0 + settings.adc_cal_l[idx],
+  long mapped = map(val, 0 + settings.adc_cal_l[idx],
                     32768 + settings.adc_cal_h[idx], 0, 6144);
-  channels_mv[idx] = mv;
+  if (mapped <= 0) {
+    mapped = 0;
+  }
+  channels_mv[idx] = mapped;
 }
 
 #define SAMPLES_PER_SEC 8
@@ -36,13 +39,15 @@ void Adc::Run() {
     Read(i);
   }
 
-  channels_count = 0;
+  uint8_t cmax = 0;
   for (int i = 0; i < 8; ++i) {
-    if (channels_mv[i] < 500) {
-      break; // No voltage here!
+    if (channels_mv[i] > 500) {
+      if (i + 1 > cmax) {
+        cmax = i + 1;
+      }
     }
-    channels_count++;
   }
+  channels_count = cmax;
 
   for (int i = 0; i < channels_count; ++i) {
     uint16_t prev = i == 0 ? 0 : channels_mv[i - 1];

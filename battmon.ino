@@ -8,7 +8,7 @@
 #include "settings.h"
 #include "task.h"
 
-Flasher status(20, 3000);
+Flasher status;
 Adc adc;
 Display display;
 Cli cli;

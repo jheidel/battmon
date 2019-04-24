@@ -69,6 +69,18 @@ public:
       display.println(nbuf);
     }
 
+    if (settings.cutoff_idx > 0) {
+      memset(nbuf, 0, sizeof(nbuf));
+      display.print(F("Cutoff "));
+      dtostrf(double(cutoff_mv[settings.cutoff_idx]) / 1000, 0, 2, nbuf);
+      display.print(nbuf);
+      display.print(F(" V"));
+      if (IsCriticalVoltage()) {
+        display.print(F(" (LOW)"));
+      }
+      display.println();
+    }
+
     display.setCursor(0, display.getCursorY() + 2);
 
     for (int i = 0; i < channels_count; ++i) {
@@ -181,13 +193,13 @@ public:
     display.setTextSize(1);
     display.println(F("Settings"));
     display.setTextSize(2);
-    display.println(F("Cutoff Volts"));
+    display.println(F("Cutoff"));
     display.setTextSize(1);
     if (settings.cutoff_idx == 0) {
       display.println(F("OFF"));
     } else {
       char buf[8] = {0};
-      dtostrf(cutoff_mv[settings.cutoff_idx] / 1000, 0, 1, buf);
+      dtostrf(double(cutoff_mv[settings.cutoff_idx]) / 1000, 0, 2, buf);
       display.print(buf);
       display.println(F(" V"));
     }

@@ -5,6 +5,9 @@
 
 namespace {
 
+bool critical_ = false;
+unsigned long since_ = 0;
+
 void Shutdown() {
   for (int i = 0; i < 5; ++i) {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -46,3 +49,5 @@ void Poweroff::Run() {
     critical_ = false;
   }
 }
+
+bool IsCriticalVoltage() { return critical_; }
