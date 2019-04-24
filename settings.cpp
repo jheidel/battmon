@@ -12,14 +12,24 @@ inline bool SettingsValid() {
          settings.size == sizeof(PersistentSettings);
 }
 
+void InitSettings() {
+  memset(&settings, 0, sizeof(settings));
+  // Defaults
+  settings.magic = SETTINGS_MAGIC;
+  settings.size = sizeof(PersistentSettings);
+  settings.enable_heartbeat = true;
+}
+
 } // namespace
 
 void LoadSettings() {
   EEPROM.get(0, settings);
   if (!SettingsValid()) {
-    settings = PersistentSettings();
+    InitSettings();
     PersistSettings();
   }
 }
 
-void PersistSettings() { EEPROM.put(0, settings); }
+void PersistSettings() {
+  EEPROM.put(0, settings);
+}

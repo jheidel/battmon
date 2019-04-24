@@ -9,9 +9,7 @@
 #include "settings.h"
 #include "task.h"
 
-// TODO some better form of status display.
 Flasher status(20, 3000);
-
 Adc adc;
 Display display;
 Cli cli;

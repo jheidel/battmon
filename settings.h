@@ -3,14 +3,9 @@
 
 #include <Arduino.h>
 
-#define SETTINGS_MAGIC 0xABCD
+#define SETTINGS_MAGIC 0xBBCA
 
 struct PersistentSettings {
-  PersistentSettings() {
-    magic = SETTINGS_MAGIC;
-    size = sizeof(PersistentSettings);
-  }
-
   uint16_t magic;
   uint16_t size;
 
@@ -20,6 +15,7 @@ struct PersistentSettings {
 
   bool enable_heartbeat;
   bool display_raw_voltage;
+  bool show_sram;
 };
 
 struct RuntimeSettings {};

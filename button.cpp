@@ -8,7 +8,7 @@
 
 namespace {
 
-#define DEBOUNCE_MS 75
+#define DEBOUNCE_MS 100
 
 volatile byte button_0 = LOW;
 volatile byte button_1 = LOW;
@@ -25,7 +25,9 @@ bool Buttons::Setup() {
   return true;
 }
 
-bool Buttons::CanRun() { return button_0 == HIGH; }
+bool Buttons::CanRun() {
+  return button_0 == HIGH || button_1 == HIGH;
+}
 
 void Buttons::Run() {
   if (is_first_run()) {

@@ -13,8 +13,8 @@
 #define LED_CONTROL 6
 #define FAN_CONTROL 5
 
-#define PIN_BUTTON_0 2
-#define PIN_BUTTON_1 3
+#define PIN_BUTTON_0 3
+#define PIN_BUTTON_1 2
 
 extern uint16_t channels_mv[8];
 extern uint16_t cells_mv[8];
