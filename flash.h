@@ -16,7 +16,7 @@ public:
   void Run() override {
     if (state_) {
       state_ = false;
-      digitalWrite(LED_BUILTIN, LOW);
+      analogWrite(LED_BUILTIN, 0);
       set_interval(off_);
     } else {
       state_ = true;
