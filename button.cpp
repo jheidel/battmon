@@ -25,9 +25,7 @@ bool Buttons::Setup() {
   return true;
 }
 
-bool Buttons::CanRun() {
-  return button_0 == HIGH || button_1 == HIGH;
-}
+bool Buttons::CanRun() { return button_0 == HIGH || button_1 == HIGH; }
 
 void Buttons::Run() {
   if (is_first_run()) {

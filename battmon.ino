@@ -1,11 +1,10 @@
-#include <SPI.h>
-
 #include "adc.h"
 #include "button.h"
 #include "cli.h"
 #include "display.h"
 #include "flash.h"
 #include "globals.h"
+#include "poweroff.h"
 #include "settings.h"
 #include "task.h"
 
@@ -14,9 +13,10 @@ Adc adc;
 Display display;
 Cli cli;
 Buttons buttons;
+Poweroff poweroff;
 
 Task* all_tasks[] = {
-    &buttons, &status, &adc, &buttons, &display, &buttons, &cli,
+    &buttons, &status, &adc, &buttons, &display, &buttons, &cli, &poweroff,
 };
 
 void Fatal(uint8_t code) {
@@ -63,15 +63,4 @@ void loop() {
   for (int i = 0; i < sizeof(all_tasks) / sizeof(Task*); ++i) {
     all_tasks[i]->Tick(now);
   }
-
-  //  // TODO: move
-  //  if (now > 300000 || channels_mv[0] < 8000) {
-  //    for (int i = 0; i < 5; ++i) {
-  //      tone(BUZZER_PIN, 440 * 2, 300);
-  //      delay(500);
-  //    }
-  //    digitalWrite(PWR_CONTROL, HIGH);
-  //    for (;;)
-  //      ;
-  //  }
 }

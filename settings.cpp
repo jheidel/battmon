@@ -3,7 +3,6 @@
 #include <EEPROM.h>
 
 PersistentSettings settings = {};
-RuntimeSettings runtime = {};
 
 namespace {
 
@@ -30,6 +29,4 @@ void LoadSettings() {
   }
 }
 
-void PersistSettings() {
-  EEPROM.put(0, settings);
-}
+void PersistSettings() { EEPROM.put(0, settings); }

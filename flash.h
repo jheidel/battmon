@@ -20,7 +20,7 @@ public:
       set_interval(off_);
     } else {
       state_ = true;
-      digitalWrite(LED_BUILTIN, HIGH);
+      analogWrite(LED_BUILTIN, 16); // dim flash
       set_interval(on_);
     }
   }

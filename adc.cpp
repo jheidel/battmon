@@ -38,7 +38,7 @@ void Adc::Run() {
 
   channels_count = 0;
   for (int i = 0; i < 8; ++i) {
-    if (channels_mv[i] < 100) {
+    if (channels_mv[i] < 500) {
       break; // No voltage here!
     }
     channels_count++;

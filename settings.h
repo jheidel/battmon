@@ -16,13 +16,11 @@ struct PersistentSettings {
   bool enable_heartbeat;
   bool display_raw_voltage;
   bool show_sram;
+
+  uint8_t cutoff_idx;
 };
 
-struct RuntimeSettings {};
-
 extern PersistentSettings settings;
-
-extern RuntimeSettings runtime;
 
 void LoadSettings();
 
